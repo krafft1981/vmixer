@@ -105,7 +105,8 @@ PROGRAMS = $(noinst_PROGRAMS) $(sbin_PROGRAMS)
 am_tester_OBJECTS = tester-tester.$(OBJEXT) tester-logger.$(OBJEXT) \
 	tester-vector.$(OBJEXT) tester-rbtree.$(OBJEXT) \
 	tester-jsonlx.$(OBJEXT) tester-jsonpr.$(OBJEXT) \
-	tester-netrpc.$(OBJEXT)
+	tester-netrpc.$(OBJEXT) tester-thread.$(OBJEXT) \
+	tester-propes.$(OBJEXT)
 tester_OBJECTS = $(am_tester_OBJECTS)
 am__DEPENDENCIES_1 =
 tester_DEPENDENCIES = $(am__DEPENDENCIES_1)
@@ -119,7 +120,8 @@ tester_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) \
 am_vmixer_OBJECTS = vmixer-vmixer.$(OBJEXT) vmixer-logger.$(OBJEXT) \
 	vmixer-vector.$(OBJEXT) vmixer-rbtree.$(OBJEXT) \
 	vmixer-jsonlx.$(OBJEXT) vmixer-jsonpr.$(OBJEXT) \
-	vmixer-netrpc.$(OBJEXT)
+	vmixer-netrpc.$(OBJEXT) vmixer-thread.$(OBJEXT) \
+	vmixer-propes.$(OBJEXT)
 vmixer_OBJECTS = $(am_vmixer_OBJECTS)
 vmixer_DEPENDENCIES = $(am__DEPENDENCIES_1)
 vmixer_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) \
@@ -340,7 +342,9 @@ vmixer_SOURCES = vmixer.c \
 				rbtree.c \
 				jsonlx.l \
 				jsonpr.y \
-				netrpc.c
+				netrpc.c \
+				thread.c \
+				propes.c
 
 tester_LDADD = $(LIBEV_LIBS)
 tester_CFLAGS = $(LIBEV_CFLAGS) -I../include
@@ -351,7 +355,9 @@ tester_SOURCES = tester.c \
 				rbtree.c \
 				jsonlx.l \
 				jsonpr.y \
-				netrpc.c
+				netrpc.c \
+				thread.c \
+				propes.c
 
 all: all-am
 
@@ -466,14 +472,18 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/tester-jsonpr.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/tester-logger.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/tester-netrpc.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/tester-propes.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/tester-rbtree.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/tester-tester.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/tester-thread.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/tester-vector.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/vmixer-jsonlx.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/vmixer-jsonpr.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/vmixer-logger.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/vmixer-netrpc.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/vmixer-propes.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/vmixer-rbtree.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/vmixer-thread.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/vmixer-vector.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/vmixer-vmixer.Po@am__quote@
 
@@ -596,6 +606,34 @@ tester-netrpc.obj: netrpc.c
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(tester_CFLAGS) $(CFLAGS) -c -o tester-netrpc.obj `if test -f 'netrpc.c'; then $(CYGPATH_W) 'netrpc.c'; else $(CYGPATH_W) '$(srcdir)/netrpc.c'; fi`
 
+tester-thread.o: thread.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(tester_CFLAGS) $(CFLAGS) -MT tester-thread.o -MD -MP -MF $(DEPDIR)/tester-thread.Tpo -c -o tester-thread.o `test -f 'thread.c' || echo '$(srcdir)/'`thread.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/tester-thread.Tpo $(DEPDIR)/tester-thread.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='thread.c' object='tester-thread.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(tester_CFLAGS) $(CFLAGS) -c -o tester-thread.o `test -f 'thread.c' || echo '$(srcdir)/'`thread.c
+
+tester-thread.obj: thread.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(tester_CFLAGS) $(CFLAGS) -MT tester-thread.obj -MD -MP -MF $(DEPDIR)/tester-thread.Tpo -c -o tester-thread.obj `if test -f 'thread.c'; then $(CYGPATH_W) 'thread.c'; else $(CYGPATH_W) '$(srcdir)/thread.c'; fi`
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/tester-thread.Tpo $(DEPDIR)/tester-thread.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='thread.c' object='tester-thread.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(tester_CFLAGS) $(CFLAGS) -c -o tester-thread.obj `if test -f 'thread.c'; then $(CYGPATH_W) 'thread.c'; else $(CYGPATH_W) '$(srcdir)/thread.c'; fi`
+
+tester-propes.o: propes.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(tester_CFLAGS) $(CFLAGS) -MT tester-propes.o -MD -MP -MF $(DEPDIR)/tester-propes.Tpo -c -o tester-propes.o `test -f 'propes.c' || echo '$(srcdir)/'`propes.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/tester-propes.Tpo $(DEPDIR)/tester-propes.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='propes.c' object='tester-propes.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(tester_CFLAGS) $(CFLAGS) -c -o tester-propes.o `test -f 'propes.c' || echo '$(srcdir)/'`propes.c
+
+tester-propes.obj: propes.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(tester_CFLAGS) $(CFLAGS) -MT tester-propes.obj -MD -MP -MF $(DEPDIR)/tester-propes.Tpo -c -o tester-propes.obj `if test -f 'propes.c'; then $(CYGPATH_W) 'propes.c'; else $(CYGPATH_W) '$(srcdir)/propes.c'; fi`
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/tester-propes.Tpo $(DEPDIR)/tester-propes.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='propes.c' object='tester-propes.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(tester_CFLAGS) $(CFLAGS) -c -o tester-propes.obj `if test -f 'propes.c'; then $(CYGPATH_W) 'propes.c'; else $(CYGPATH_W) '$(srcdir)/propes.c'; fi`
+
 vmixer-vmixer.o: vmixer.c
 @am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(vmixer_CFLAGS) $(CFLAGS) -MT vmixer-vmixer.o -MD -MP -MF $(DEPDIR)/vmixer-vmixer.Tpo -c -o vmixer-vmixer.o `test -f 'vmixer.c' || echo '$(srcdir)/'`vmixer.c
 @am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/vmixer-vmixer.Tpo $(DEPDIR)/vmixer-vmixer.Po
@@ -693,6 +731,34 @@ vmixer-netrpc.obj: netrpc.c
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='netrpc.c' object='vmixer-netrpc.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(vmixer_CFLAGS) $(CFLAGS) -c -o vmixer-netrpc.obj `if test -f 'netrpc.c'; then $(CYGPATH_W) 'netrpc.c'; else $(CYGPATH_W) '$(srcdir)/netrpc.c'; fi`
+
+vmixer-thread.o: thread.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(vmixer_CFLAGS) $(CFLAGS) -MT vmixer-thread.o -MD -MP -MF $(DEPDIR)/vmixer-thread.Tpo -c -o vmixer-thread.o `test -f 'thread.c' || echo '$(srcdir)/'`thread.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/vmixer-thread.Tpo $(DEPDIR)/vmixer-thread.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='thread.c' object='vmixer-thread.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(vmixer_CFLAGS) $(CFLAGS) -c -o vmixer-thread.o `test -f 'thread.c' || echo '$(srcdir)/'`thread.c
+
+vmixer-thread.obj: thread.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(vmixer_CFLAGS) $(CFLAGS) -MT vmixer-thread.obj -MD -MP -MF $(DEPDIR)/vmixer-thread.Tpo -c -o vmixer-thread.obj `if test -f 'thread.c'; then $(CYGPATH_W) 'thread.c'; else $(CYGPATH_W) '$(srcdir)/thread.c'; fi`
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/vmixer-thread.Tpo $(DEPDIR)/vmixer-thread.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='thread.c' object='vmixer-thread.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(vmixer_CFLAGS) $(CFLAGS) -c -o vmixer-thread.obj `if test -f 'thread.c'; then $(CYGPATH_W) 'thread.c'; else $(CYGPATH_W) '$(srcdir)/thread.c'; fi`
+
+vmixer-propes.o: propes.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(vmixer_CFLAGS) $(CFLAGS) -MT vmixer-propes.o -MD -MP -MF $(DEPDIR)/vmixer-propes.Tpo -c -o vmixer-propes.o `test -f 'propes.c' || echo '$(srcdir)/'`propes.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/vmixer-propes.Tpo $(DEPDIR)/vmixer-propes.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='propes.c' object='vmixer-propes.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(vmixer_CFLAGS) $(CFLAGS) -c -o vmixer-propes.o `test -f 'propes.c' || echo '$(srcdir)/'`propes.c
+
+vmixer-propes.obj: propes.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(vmixer_CFLAGS) $(CFLAGS) -MT vmixer-propes.obj -MD -MP -MF $(DEPDIR)/vmixer-propes.Tpo -c -o vmixer-propes.obj `if test -f 'propes.c'; then $(CYGPATH_W) 'propes.c'; else $(CYGPATH_W) '$(srcdir)/propes.c'; fi`
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/vmixer-propes.Tpo $(DEPDIR)/vmixer-propes.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='propes.c' object='vmixer-propes.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(vmixer_CFLAGS) $(CFLAGS) -c -o vmixer-propes.obj `if test -f 'propes.c'; then $(CYGPATH_W) 'propes.c'; else $(CYGPATH_W) '$(srcdir)/propes.c'; fi`
 
 .l.c:
 	$(AM_V_LEX)$(am__skiplex) $(SHELL) $(YLWRAP) $< $(LEX_OUTPUT_ROOT).c $@ -- $(LEXCOMPILE)

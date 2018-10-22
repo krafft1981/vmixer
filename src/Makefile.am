@@ -13,7 +13,9 @@ vmixer_SOURCES		=	vmixer.c \
 				rbtree.c \
 				jsonlx.l \
 				jsonpr.y \
-				netrpc.c
+				netrpc.c \
+				thread.c \
+				propes.c
 
 tester_LDADD		=	$(LIBEV_LIBS)
 tester_CFLAGS		=	$(LIBEV_CFLAGS) -I../include
@@ -24,4 +26,6 @@ tester_SOURCES		=	tester.c \
 				rbtree.c \
 				jsonlx.l \
 				jsonpr.y \
-				netrpc.c
+				netrpc.c \
+				thread.c \
+				propes.c
