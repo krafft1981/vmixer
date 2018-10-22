@@ -1,27 +1,16 @@
 
-#include <string.h>
-#include "config.h"
-#include "parser.h"
-#include "addres.h"
-#include "loader.h"
-#include "logger.h"
-
-module_t export = { 0 };
+#include <stdio.h>
+#include "netrpc.h"
 
 int main(int argc, char* argv[]) {
 
-	setConsoleLog(1);
-	setDebugMode(1);
-
 	parser_t* parser = parser_create();
-
-	int id = 1000;
-	while (id --) {
-		json_node_t* node = parser_parse_file(parser, argv[1]);
-		if (node)
-			json_node_destroy(node);
+	json_node_t* node = parser_parse_string(parser, "{\"a\":\"b\", \"c\":\"d\"}");
+	if (node) {
+		char str[30] = {0};
+		int len = sizeof(str);
+		printf("res(%d) \"%s\"\n", json_node_print(node, JSON_STYLE_MINIMAL, &len, str), str);
+		json_node_destroy(node);
 	}
-
 	parser_destroy(parser);
-	return 0;
 }

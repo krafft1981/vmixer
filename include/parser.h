@@ -55,37 +55,37 @@ int json_node_print(json_node_t* node, json_style_t style, int* len, char* str);
 /** Create json_node_t* type JSON_NODE_TYPE_OBJECT */
 json_node_t* json_node_object(rbtree_t* tree);
 
-/** get node from object by key=name */
+/** get node with name:type from object*/
 json_node_t* json_node_object_node(json_node_t* node, const char* name, json_node_type_t type);
 
 /** Create json_node_t* type JSON_NODE_TYPE_ARRAY */
 json_node_t* json_node_array(vector_t* vector);
 
-/** get element from array by id */
+/** get node value from array by index*/
 json_node_t* json_node_array_node(json_node_t* node, int id);
 
 /** Create json_node_t* type JSON_NODE_TYPE_STRING */
 json_node_t* json_node_string(const char* value);
 
-/** */
+/** get char value from JSON_NODE_TYPE_STRING */
 const char* json_node_string_value(json_node_t* node);
 
 /** Create json_node_t* type JSON_NODE_TYPE_INTEGER */
 json_node_t* json_node_int(int value);
 
-/** */
+/** get int value from JSON_NODE_TYPE_INTEGER */
 int json_node_int_value(json_node_t* node);
 
 /** Create json_node_t* type JSON_NODE_TYPE_DOUBLE */
 json_node_t* json_node_double(double value);
 
-/** */
+/** get double value from JSON_NODE_TYPE_DOUBLE */
 double json_node_double_value(json_node_t* node);
 
 /** Create json_node_t* type JSON_NODE_TYPE_BOOL */
 json_node_t* json_node_bool(int value);
 
-/** */
+/** get bool value from JSON_NODE_TYPE_BOOL */
 int json_node_bool_value(json_node_t* node);
 
 /** Create json_node_t* type JSON_NODE_TYPE_NULL */

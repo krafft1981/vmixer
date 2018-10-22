@@ -1150,8 +1150,11 @@ static int yy_get_next_buffer (yyscan_t yyscanner)
 				"fatal error - scanner input buffer overflow" );
 
 			yyg->yy_c_buf_p = &b->yy_ch_buf[yy_c_buf_p_offset];
-			num_to_read = YY_CURRENT_BUFFER_LVALUE->yy_buf_size - number_to_move - 1;
-		}
+
+			num_to_read = YY_CURRENT_BUFFER_LVALUE->yy_buf_size -
+						number_to_move - 1;
+
+			}
 
 		if ( num_to_read > YY_READ_BUF_SIZE )
 			num_to_read = YY_READ_BUF_SIZE;
@@ -1196,16 +1199,20 @@ static int yy_get_next_buffer (yyscan_t yyscanner)
 	yyg->yy_n_chars += number_to_move;
 	YY_CURRENT_BUFFER_LVALUE->yy_ch_buf[yyg->yy_n_chars] = YY_END_OF_BUFFER_CHAR;
 	YY_CURRENT_BUFFER_LVALUE->yy_ch_buf[yyg->yy_n_chars + 1] = YY_END_OF_BUFFER_CHAR;
+
 	yyg->yytext_ptr = &YY_CURRENT_BUFFER_LVALUE->yy_ch_buf[0];
+
 	return ret_val;
 }
 
 /* yy_get_previous_state - get the state just before the EOB char was reached */
 
-static yy_state_type yy_get_previous_state (yyscan_t yyscanner) {
+    static yy_state_type yy_get_previous_state (yyscan_t yyscanner)
+{
 	yy_state_type yy_current_state;
 	char *yy_cp;
-	struct yyguts_t * yyg = (struct yyguts_t*)yyscanner;
+    struct yyguts_t * yyg = (struct yyguts_t*)yyscanner;
+
 	yy_current_state = yyg->yy_start;
 
 	for ( yy_cp = yyg->yytext_ptr + YY_MORE_ADJ; yy_cp < yyg->yy_c_buf_p; ++yy_cp )
@@ -2140,7 +2147,6 @@ json_node_t* parser_parse_string(parser_t* parser, const char* str) {
 	}
 
 	yy_delete_buffer(buffer, parser->scanner);
-	
 	return node;
 }
 
@@ -2334,18 +2340,19 @@ void json_node_destroy(void* data) {
 	free(data);
 }
 
-static size_t strlcat(char* dst, int* size, ...) {
+static int strlcatv(char* dst, int* size, ...) {
 
 	if (!dst || !*size)
 		return -1;
 
-	int res = 0;
+	register int res = 0;
 	char* src;
 	va_list va;
 	va_start(va, size);
 	while (src = va_arg(va, char*)) {
-		int dstlen = strlen(dst);
-		int srclen = strlen(src);
+
+		register int dstlen = strlen(dst);
+		register int srclen = strlen(src);
 
 		if (*size <= 0 || dstlen + srclen >= *size) {
 			res = -1;
@@ -2357,6 +2364,7 @@ static size_t strlcat(char* dst, int* size, ...) {
 		*size-=srclen;
 	}
 	va_end(va);
+
 	return res;
 }
 
@@ -2368,31 +2376,36 @@ int json_node_print(json_node_t* node, json_style_t style, int* len, char* str) 
 	int res = 0;
 	switch(json_node_type(node)) {
 		case JSON_NODE_TYPE_BOOL: {
-			if (strlcat(str, len, node->v_bool ? "TRUE" : "FALSE", NULL)) res = -1;
+			if (strlcatv(str, len, node->v_bool ? "TRUE" : "FALSE", NULL))
+				res = -1;
 			break;
 		}
 
 		case JSON_NODE_TYPE_INTEGER: {
 			char buffer[16];
 			snprintf(buffer, sizeof(buffer), "%d", node->v_int);
-			if (strlcat(str, len, buffer, NULL)) res = -1;
+			if (strlcatv(str, len, buffer, NULL))
+				res = -1;
 			break;
 		}
 
 		case JSON_NODE_TYPE_DOUBLE: {
 			char buffer[64];
 			snprintf(buffer, sizeof(buffer), "%f", node->v_double);
-			if (strlcat(str, len, buffer, NULL)) res = -1;
+			if (strlcatv(str, len, buffer, NULL))
+				res = -1;
 			break;
 		}
 
 		case JSON_NODE_TYPE_NULL: {
-			if (strlcat(str, len, "NULL", NULL)) res = -1;
+			if (strlcatv(str, len, "NULL", NULL))
+				res = -1;
 			break;
 		}
 
 		case JSON_NODE_TYPE_STRING: {
-			if (strlcat(str, len, "\"", node->v_string, "\"", NULL)) res = -1;
+			if (strlcatv(str, len, "\"", node->v_string, "\"", NULL))
+				res = -1;
 			break;
 		}
 
@@ -2401,16 +2414,17 @@ int json_node_print(json_node_t* node, json_style_t style, int* len, char* str) 
 			const char* key;
 			void* data;
 
-			if (strlcat(str, len, "{", NULL)) res = -1;
-
+			res = strlcatv(str, len, "{", NULL);
 			int id = rbtree_size(node->v_object);
-			while ((rbtree_iterate(it, &key, &data)) && !res) {
-				if (strlcat(str, len, "\"", key, "\":", NULL)) res = -1;
-				if (json_node_print(data, style, len, str)) res = -1;
-				if (-- id)
-					if (strlcat(str, len, ",", NULL)) res = -1;
+			while ((rbtree_iterate(it, &key, &data)) && !res && id--) {
+				if (res = strlcatv(str, len, "\"", key, "\":", NULL)) continue;
+//				if (res = json_node_print(data, style, len, str))     continue;
+//				if (res = strlcatv(str, len, ",", NULL))              continue;
 			}
-			if (strlcat(str, len, "}", NULL)) res = -1;
+
+			if (strlcatv(str, len, "}", NULL))
+				res = -1;
+
 			rbtree_iterator_destroy(it);
 			break;
 		}
@@ -2418,15 +2432,16 @@ int json_node_print(json_node_t* node, json_style_t style, int* len, char* str) 
 		case JSON_NODE_TYPE_ARRAY: {
 			vector_iterator_t* it = vector_iterator_create(node->v_array);
 			void* data;
-			if (strlcat(str, len, "[", NULL)) res = -1;
+			if (strlcatv(str, len, "[", NULL)) res = -1;
 			int id = rbtree_size(node->v_object);
 			while ((data = vector_iterate(it)) && !res) {
 				if (json_node_print(data, style, len, str)) res = -1;
 				if (-- id)
-					if (strlcat(str, len, ",", NULL)) res = -1;
+					if (strlcatv(str, len, ",", NULL)) res = -1;
 			}
-			if (strlcat(str, len, "]", NULL)) res = -1;
-	 			vector_iterator_destroy(it);
+
+			if (strlcatv(str, len, "]", NULL)) res = -1;
+				vector_iterator_destroy(it);
 			break;
 		}
 
@@ -2443,6 +2458,7 @@ json_node_t* json_node_object_node(json_node_t* node, const char* name, json_nod
 		json_node_t* child = get_from_rbtree(node->v_object, name);
 		if (!child)
 			return NULL;
+
 		else {
 			if (type == json_node_type(child) || type == JSON_NODE_TYPE_ANY)
 				return child;

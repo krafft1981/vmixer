@@ -122,34 +122,19 @@ json_node_t* parser_parse_file(parser_t* parser, const char* file) {
 	return node;
 }
 
-int parser_write_file(json_node_t* node, json_style_t style, const char* file) {
-
-	if (!node || !file)
-		return -1;
-
-	ERROR("write file not ready yet");
-	return -1;
-}
-
 json_node_t* parser_parse_buffer(parser_t* parser, const char* buffer, int len) {
 
 	if (!parser || !buffer || !len)
 		return NULL;
 
 	json_node_t* node = NULL;
-
-	struct yyguts_t* yyg = (struct yyguts_t*)parser->scanner;
-	YY_BUFFER_STATE current = YY_CURRENT_BUFFER;
 	YY_BUFFER_STATE b = yy_scan_bytes(buffer, len, parser->scanner);
-
 	if (yyparse(parser->scanner, &node)) {
 		json_node_destroy(node);
 		node = NULL;
 	}
 
 	yy_delete_buffer(b, parser->scanner);
-	yy_switch_to_buffer(current, parser->scanner);
-
 	return node;
 }
 
@@ -159,19 +144,13 @@ json_node_t* parser_parse_string(parser_t* parser, const char* str) {
 		return NULL;
 
 	json_node_t* node = NULL;
-
-	struct yyguts_t* yyg = (struct yyguts_t*)parser->scanner;
-	YY_BUFFER_STATE current = YY_CURRENT_BUFFER;
 	YY_BUFFER_STATE buffer = yy_scan_string(str, parser->scanner);
-
 	if (yyparse(parser->scanner, &node)) {
 		json_node_destroy(node);
 		node = NULL;
 	}
 
 	yy_delete_buffer(buffer, parser->scanner);
-	yy_switch_to_buffer(current, parser->scanner);
-
 	return node;
 }
 
@@ -195,7 +174,7 @@ json_node_t* json_node_array(vector_t* vector) {
 		node->type = JSON_NODE_TYPE_ARRAY;
 		if (vector)
 			node->v_array = vector;
-		else	node->v_array = vector_create(5, json_node_destroy);
+		else	node->v_array = vector_create(0, json_node_destroy);
 	}
 
 	return node;
@@ -365,7 +344,7 @@ void json_node_destroy(void* data) {
 	free(data);
 }
 
-static int strlcat(char* dst, int* size, ...) {
+static int strlcatv(char* dst, int* size, ...) {
 
 	if (!dst || !*size)
 		return -1;
@@ -375,6 +354,7 @@ static int strlcat(char* dst, int* size, ...) {
 	va_list va;
 	va_start(va, size);
 	while (src = va_arg(va, char*)) {
+
 		register int dstlen = strlen(dst);
 		register int srclen = strlen(src);
 
@@ -388,6 +368,7 @@ static int strlcat(char* dst, int* size, ...) {
 		*size-=srclen;
 	}
 	va_end(va);
+
 	return res;
 }
 
@@ -399,31 +380,36 @@ int json_node_print(json_node_t* node, json_style_t style, int* len, char* str) 
 	int res = 0;
 	switch(json_node_type(node)) {
 		case JSON_NODE_TYPE_BOOL: {
-			if (strlcat(str, len, node->v_bool ? "TRUE" : "FALSE", NULL)) res = -1;
+			if (strlcatv(str, len, node->v_bool ? "TRUE" : "FALSE", NULL))
+				res = -1;
 			break;
 		}
 
 		case JSON_NODE_TYPE_INTEGER: {
 			char buffer[16];
 			snprintf(buffer, sizeof(buffer), "%d", node->v_int);
-			if (strlcat(str, len, buffer, NULL)) res = -1;
+			if (strlcatv(str, len, buffer, NULL))
+				res = -1;
 			break;
 		}
 
 		case JSON_NODE_TYPE_DOUBLE: {
 			char buffer[64];
 			snprintf(buffer, sizeof(buffer), "%f", node->v_double);
-			if (strlcat(str, len, buffer, NULL)) res = -1;
+			if (strlcatv(str, len, buffer, NULL))
+				res = -1;
 			break;
 		}
 
 		case JSON_NODE_TYPE_NULL: {
-			if (strlcat(str, len, "NULL", NULL)) res = -1;
+			if (strlcatv(str, len, "NULL", NULL))
+				res = -1;
 			break;
 		}
 
 		case JSON_NODE_TYPE_STRING: {
-			if (strlcat(str, len, "\"", node->v_string, "\"", NULL)) res = -1;
+			if (strlcatv(str, len, "\"", node->v_string, "\"", NULL))
+				res = -1;
 			break;
 		}
 
@@ -432,16 +418,17 @@ int json_node_print(json_node_t* node, json_style_t style, int* len, char* str) 
 			const char* key;
 			void* data;
 
-			if (strlcat(str, len, "{", NULL)) res = -1;
-
+			res = strlcatv(str, len, "{", NULL);
 			int id = rbtree_size(node->v_object);
-			while ((rbtree_iterate(it, &key, &data)) && !res) {
-				if (strlcat(str, len, "\"", key, "\":", NULL)) res = -1;
-				if (json_node_print(data, style, len, str)) res = -1;
-				if (-- id)
-					if (strlcat(str, len, ",", NULL)) res = -1;
+			while ((rbtree_iterate(it, &key, &data)) && !res && id--) {
+				if (res = strlcatv(str, len, "\"", key, "\":", NULL)) continue;
+//				if (res = json_node_print(data, style, len, str))     continue;
+//				if (res = strlcatv(str, len, ",", NULL))              continue;
 			}
-			if (strlcat(str, len, "}", NULL)) res = -1;
+
+			if (strlcatv(str, len, "}", NULL))
+				res = -1;
+
 			rbtree_iterator_destroy(it);
 			break;
 		}
@@ -449,16 +436,16 @@ int json_node_print(json_node_t* node, json_style_t style, int* len, char* str) 
 		case JSON_NODE_TYPE_ARRAY: {
 			vector_iterator_t* it = vector_iterator_create(node->v_array);
 			void* data;
-			if (strlcat(str, len, "[", NULL)) res = -1;
+			if (strlcatv(str, len, "[", NULL)) res = -1;
 			int id = rbtree_size(node->v_object);
 			while ((data = vector_iterate(it)) && !res) {
 				if (json_node_print(data, style, len, str)) res = -1;
 				if (-- id)
-					if (strlcat(str, len, ",", NULL)) res = -1;
+					if (strlcatv(str, len, ",", NULL)) res = -1;
 			}
 
-			if (strlcat(str, len, "]", NULL)) res = -1;
-	 			vector_iterator_destroy(it);
+			if (strlcatv(str, len, "]", NULL)) res = -1;
+				vector_iterator_destroy(it);
 			break;
 		}
 
@@ -475,13 +462,13 @@ json_node_t* json_node_object_node(json_node_t* node, const char* name, json_nod
 		json_node_t* child = get_from_rbtree(node->v_object, name);
 		if (!child)
 			return NULL;
+
 		else {
 			if (type == json_node_type(child) || type == JSON_NODE_TYPE_ANY)
 				return child;
 			else	return NULL;
 		}
 	}
-
 	else
 		return NULL;
 }
@@ -491,12 +478,8 @@ json_node_t* json_node_array_node(json_node_t* node, int id) {
 	if (!node || id > json_node_array_count(node))
 		return NULL;
 
-	vector_iterator_t* it = vector_iterator_create(node->v_array);
-	json_node_t* data;
-	while ((data = vector_iterate(it)) && (id))
-		id --;
-	vector_iterator_destroy(it);
-	return data;
+	ERROR("get from array not ready !!!");
+	return NULL;
 }
 
 const char* json_node_string_value(json_node_t* node) {

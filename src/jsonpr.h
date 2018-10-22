@@ -1,8 +1,8 @@
-/* A Bison parser, made by GNU Bison 3.0.4.  */
+/* A Bison parser, made by GNU Bison 3.0.5.  */
 
 /* Bison interface for Yacc-like parsers in C
 
-   Copyright (C) 1984, 1989-1990, 2000-2015 Free Software Foundation, Inc.
+   Copyright (C) 1984, 1989-1990, 2000-2015, 2018 Free Software Foundation, Inc.
 
    This program is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -40,11 +40,12 @@
 extern int yydebug;
 #endif
 /* "%code requires" blocks.  */
-#line 10 "jsonpr.y" /* yacc.c:1909  */
+#line 10 "jsonpr.y" /* yacc.c:1910  */
 
 
 #include <stdio.h>
 #include <string.h>
+#include <stdlib.h>
 #include "parser.h"
 #include "rbtree.h"
 #include "vector.h"
@@ -93,7 +94,7 @@ extern void yyerror(yyscan_t scanner, json_node_t* *node, char const* msg);
 static json_value_t* json_value_create(json_node_t* node);
 static void json_value_destroy(json_value_t* value, int mode);
 
-#line 97 "jsonpr.h" /* yacc.c:1909  */
+#line 98 "jsonpr.h" /* yacc.c:1910  */
 
 /* Token type.  */
 #ifndef YYTOKENTYPE
@@ -119,7 +120,7 @@ static void json_value_destroy(json_value_t* value, int mode);
 
 union YYSTYPE
 {
-#line 63 "jsonpr.y" /* yacc.c:1909  */
+#line 64 "jsonpr.y" /* yacc.c:1910  */
 
 	json_node_t* node;
 	char* s;
@@ -128,7 +129,7 @@ union YYSTYPE
 	int b;
 	json_value_t* v;
 
-#line 132 "jsonpr.h" /* yacc.c:1909  */
+#line 133 "jsonpr.h" /* yacc.c:1910  */
 };
 
 typedef union YYSTYPE YYSTYPE;

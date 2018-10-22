@@ -1,8 +1,8 @@
-/* A Bison parser, made by GNU Bison 3.0.4.  */
+/* A Bison parser, made by GNU Bison 3.0.5.  */
 
 /* Bison implementation for Yacc-like parsers in C
 
-   Copyright (C) 1984, 1989-1990, 2000-2015 Free Software Foundation, Inc.
+   Copyright (C) 1984, 1989-1990, 2000-2015, 2018 Free Software Foundation, Inc.
 
    This program is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -44,7 +44,7 @@
 #define YYBISON 1
 
 /* Bison version.  */
-#define YYBISON_VERSION "3.0.4"
+#define YYBISON_VERSION "3.0.5"
 
 /* Skeleton name.  */
 #define YYSKELETON_NAME "yacc.c"
@@ -98,6 +98,7 @@ extern int yydebug;
 
 #include <stdio.h>
 #include <string.h>
+#include <stdlib.h>
 #include "parser.h"
 #include "rbtree.h"
 #include "vector.h"
@@ -146,7 +147,7 @@ extern void yyerror(yyscan_t scanner, json_node_t* *node, char const* msg);
 static json_value_t* json_value_create(json_node_t* node);
 static void json_value_destroy(json_value_t* value, int mode);
 
-#line 150 "jsonpr.c" /* yacc.c:355  */
+#line 151 "jsonpr.c" /* yacc.c:355  */
 
 /* Token type.  */
 #ifndef YYTOKENTYPE
@@ -172,7 +173,7 @@ static void json_value_destroy(json_value_t* value, int mode);
 
 union YYSTYPE
 {
-#line 63 "jsonpr.y" /* yacc.c:355  */
+#line 64 "jsonpr.y" /* yacc.c:355  */
 
 	json_node_t* node;
 	char* s;
@@ -181,7 +182,7 @@ union YYSTYPE
 	int b;
 	json_value_t* v;
 
-#line 185 "jsonpr.c" /* yacc.c:355  */
+#line 186 "jsonpr.c" /* yacc.c:355  */
 };
 
 typedef union YYSTYPE YYSTYPE;
@@ -197,7 +198,7 @@ int yyparse (yyscan_t scanner, json_node_t* *node);
 
 /* Copy the second part of user declarations.  */
 
-#line 201 "jsonpr.c" /* yacc.c:358  */
+#line 202 "jsonpr.c" /* yacc.c:358  */
 
 #ifdef short
 # undef short
@@ -495,8 +496,8 @@ static const yytype_uint8 yytranslate[] =
   /* YYRLINE[YYN] -- Source line where rule number YYN was defined.  */
 static const yytype_uint8 yyrline[] =
 {
-       0,    92,    92,   100,   101,   114,   115,   128,   129,   132,
-     133,   136,   137,   138,   139,   140,   141,   142
+       0,    93,    93,   101,   102,   115,   116,   129,   130,   133,
+     134,   137,   138,   139,   140,   141,   142,   143
 };
 #endif
 
@@ -963,6 +964,7 @@ yysyntax_error (YYSIZE_T *yymsg_alloc, char **yymsg,
       case N:                               \
         yyformat = S;                       \
       break
+    default: /* Avoid compiler warnings. */
       YYCASE_(0, YY_("syntax error"));
       YYCASE_(1, YY_("syntax error, unexpected %s"));
       YYCASE_(2, YY_("syntax error, unexpected %s, expecting %s"));
@@ -1028,39 +1030,39 @@ yydestruct (const char *yymsg, int yytype, YYSTYPE *yyvaluep, yyscan_t scanner, 
   switch (yytype)
     {
           case 15: /* START  */
-#line 86 "jsonpr.y" /* yacc.c:1257  */
+#line 87 "jsonpr.y" /* yacc.c:1258  */
       { json_node_destroy (((*yyvaluep).node)); }
-#line 1034 "jsonpr.c" /* yacc.c:1257  */
+#line 1036 "jsonpr.c" /* yacc.c:1258  */
         break;
 
     case 16: /* OBJECT  */
-#line 86 "jsonpr.y" /* yacc.c:1257  */
+#line 87 "jsonpr.y" /* yacc.c:1258  */
       { json_node_destroy (((*yyvaluep).node)); }
-#line 1040 "jsonpr.c" /* yacc.c:1257  */
+#line 1042 "jsonpr.c" /* yacc.c:1258  */
         break;
 
     case 17: /* ARRAY  */
-#line 86 "jsonpr.y" /* yacc.c:1257  */
+#line 87 "jsonpr.y" /* yacc.c:1258  */
       { json_node_destroy (((*yyvaluep).node)); }
-#line 1046 "jsonpr.c" /* yacc.c:1257  */
+#line 1048 "jsonpr.c" /* yacc.c:1258  */
         break;
 
     case 18: /* MEMBER  */
-#line 85 "jsonpr.y" /* yacc.c:1257  */
+#line 86 "jsonpr.y" /* yacc.c:1258  */
       { json_value_destroy(((*yyvaluep).v), 1); }
-#line 1052 "jsonpr.c" /* yacc.c:1257  */
+#line 1054 "jsonpr.c" /* yacc.c:1258  */
         break;
 
     case 19: /* ELEMENT  */
-#line 85 "jsonpr.y" /* yacc.c:1257  */
+#line 86 "jsonpr.y" /* yacc.c:1258  */
       { json_value_destroy(((*yyvaluep).v), 1); }
-#line 1058 "jsonpr.c" /* yacc.c:1257  */
+#line 1060 "jsonpr.c" /* yacc.c:1258  */
         break;
 
     case 20: /* VALUE  */
-#line 85 "jsonpr.y" /* yacc.c:1257  */
+#line 86 "jsonpr.y" /* yacc.c:1258  */
       { json_value_destroy(((*yyvaluep).v), 1); }
-#line 1064 "jsonpr.c" /* yacc.c:1257  */
+#line 1066 "jsonpr.c" /* yacc.c:1258  */
         break;
 
 
@@ -1326,24 +1328,24 @@ yyreduce:
   switch (yyn)
     {
         case 2:
-#line 92 "jsonpr.y" /* yacc.c:1646  */
+#line 93 "jsonpr.y" /* yacc.c:1648  */
     { if (node)
 								*node = (yyvsp[0].v)->node;
 							else	json_node_destroy((yyvsp[0].v)->node);
 							json_value_destroy((yyvsp[0].v), 0);
 							(yyval.node) = NULL;
 						}
-#line 1337 "jsonpr.c" /* yacc.c:1646  */
+#line 1339 "jsonpr.c" /* yacc.c:1648  */
     break;
 
   case 3:
-#line 100 "jsonpr.y" /* yacc.c:1646  */
+#line 101 "jsonpr.y" /* yacc.c:1648  */
     { (yyval.node) = json_node_object(NULL); }
-#line 1343 "jsonpr.c" /* yacc.c:1646  */
+#line 1345 "jsonpr.c" /* yacc.c:1648  */
     break;
 
   case 4:
-#line 101 "jsonpr.y" /* yacc.c:1646  */
+#line 102 "jsonpr.y" /* yacc.c:1648  */
     { rbtree_t* rbtree = rbtree_create(free, json_node_destroy);
 								(yyval.node) = json_node_object(rbtree);
 								json_value_t* value = (yyvsp[-1].v);
@@ -1355,17 +1357,17 @@ yyreduce:
 
 								json_value_destroy((yyvsp[-1].v), 0);
 						}
-#line 1359 "jsonpr.c" /* yacc.c:1646  */
+#line 1361 "jsonpr.c" /* yacc.c:1648  */
     break;
 
   case 5:
-#line 114 "jsonpr.y" /* yacc.c:1646  */
+#line 115 "jsonpr.y" /* yacc.c:1648  */
     { (yyval.node) = json_node_array(NULL); }
-#line 1365 "jsonpr.c" /* yacc.c:1646  */
+#line 1367 "jsonpr.c" /* yacc.c:1648  */
     break;
 
   case 6:
-#line 115 "jsonpr.y" /* yacc.c:1646  */
+#line 116 "jsonpr.y" /* yacc.c:1648  */
     { vector_t* vector = vector_create(0, json_node_destroy);
 								(yyval.node) = json_node_array(vector);
 								json_value_t* value = (yyvsp[-1].v);
@@ -1377,77 +1379,77 @@ yyreduce:
 
 								json_value_destroy((yyvsp[-1].v), 0);
 						}
-#line 1381 "jsonpr.c" /* yacc.c:1646  */
+#line 1383 "jsonpr.c" /* yacc.c:1648  */
     break;
 
   case 7:
-#line 128 "jsonpr.y" /* yacc.c:1646  */
+#line 129 "jsonpr.y" /* yacc.c:1648  */
     { (yyval.v) = (yyvsp[0].v);                (yyvsp[0].v)->name = strdup((yyvsp[-2].s)); }
-#line 1387 "jsonpr.c" /* yacc.c:1646  */
+#line 1389 "jsonpr.c" /* yacc.c:1648  */
     break;
 
   case 8:
-#line 129 "jsonpr.y" /* yacc.c:1646  */
+#line 130 "jsonpr.y" /* yacc.c:1648  */
     { (yyval.v) = (yyvsp[0].v); (yyvsp[0].v)->next = (yyvsp[-4].v); (yyvsp[0].v)->name = strdup((yyvsp[-2].s)); }
-#line 1393 "jsonpr.c" /* yacc.c:1646  */
+#line 1395 "jsonpr.c" /* yacc.c:1648  */
     break;
 
   case 9:
-#line 132 "jsonpr.y" /* yacc.c:1646  */
+#line 133 "jsonpr.y" /* yacc.c:1648  */
     { (yyval.v) = (yyvsp[0].v);                }
-#line 1399 "jsonpr.c" /* yacc.c:1646  */
+#line 1401 "jsonpr.c" /* yacc.c:1648  */
     break;
 
   case 10:
-#line 133 "jsonpr.y" /* yacc.c:1646  */
+#line 134 "jsonpr.y" /* yacc.c:1648  */
     { (yyval.v) = (yyvsp[0].v); (yyvsp[0].v)->next = (yyvsp[-2].v); }
-#line 1405 "jsonpr.c" /* yacc.c:1646  */
+#line 1407 "jsonpr.c" /* yacc.c:1648  */
     break;
 
   case 11:
-#line 136 "jsonpr.y" /* yacc.c:1646  */
+#line 137 "jsonpr.y" /* yacc.c:1648  */
     { (yyval.v) = json_value_create((yyvsp[0].node)); }
-#line 1411 "jsonpr.c" /* yacc.c:1646  */
+#line 1413 "jsonpr.c" /* yacc.c:1648  */
     break;
 
   case 12:
-#line 137 "jsonpr.y" /* yacc.c:1646  */
+#line 138 "jsonpr.y" /* yacc.c:1648  */
     { (yyval.v) = json_value_create((yyvsp[0].node)); }
-#line 1417 "jsonpr.c" /* yacc.c:1646  */
+#line 1419 "jsonpr.c" /* yacc.c:1648  */
     break;
 
   case 13:
-#line 138 "jsonpr.y" /* yacc.c:1646  */
+#line 139 "jsonpr.y" /* yacc.c:1648  */
     { (yyval.v) = json_value_create(json_node_string((yyvsp[0].s))); }
-#line 1423 "jsonpr.c" /* yacc.c:1646  */
+#line 1425 "jsonpr.c" /* yacc.c:1648  */
     break;
 
   case 14:
-#line 139 "jsonpr.y" /* yacc.c:1646  */
+#line 140 "jsonpr.y" /* yacc.c:1648  */
     { (yyval.v) = json_value_create(json_node_bool  ((yyvsp[0].b))); }
-#line 1429 "jsonpr.c" /* yacc.c:1646  */
+#line 1431 "jsonpr.c" /* yacc.c:1648  */
     break;
 
   case 15:
-#line 140 "jsonpr.y" /* yacc.c:1646  */
+#line 141 "jsonpr.y" /* yacc.c:1648  */
     { (yyval.v) = json_value_create(json_node_int   ((yyvsp[0].i))); }
-#line 1435 "jsonpr.c" /* yacc.c:1646  */
+#line 1437 "jsonpr.c" /* yacc.c:1648  */
     break;
 
   case 16:
-#line 141 "jsonpr.y" /* yacc.c:1646  */
+#line 142 "jsonpr.y" /* yacc.c:1648  */
     { (yyval.v) = json_value_create(json_node_double((yyvsp[0].d))); }
-#line 1441 "jsonpr.c" /* yacc.c:1646  */
+#line 1443 "jsonpr.c" /* yacc.c:1648  */
     break;
 
   case 17:
-#line 142 "jsonpr.y" /* yacc.c:1646  */
+#line 143 "jsonpr.y" /* yacc.c:1648  */
     { (yyval.v) = json_value_create(json_node_null  (  )); }
-#line 1447 "jsonpr.c" /* yacc.c:1646  */
+#line 1449 "jsonpr.c" /* yacc.c:1648  */
     break;
 
 
-#line 1451 "jsonpr.c" /* yacc.c:1646  */
+#line 1453 "jsonpr.c" /* yacc.c:1648  */
       default: break;
     }
   /* User semantic actions sometimes alter yychar, and that requires
@@ -1675,7 +1677,7 @@ yyreturn:
 #endif
   return yyresult;
 }
-#line 145 "jsonpr.y" /* yacc.c:1906  */
+#line 146 "jsonpr.y" /* yacc.c:1907  */
 
 
 static json_value_t* json_value_create(json_node_t* node) {
