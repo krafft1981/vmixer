@@ -18,21 +18,10 @@
 
 #define LISTEN_COUNT 5
 
-struct rpc_context_s {
-
-	void* data;
-	rpc_server_t* server;
-	struct {
-		int code;
-		char* message;
-	} error;
-};
-
 struct rpc_connection_s {
 
 	int fd;
 	struct ev_io io;
-	rpc_server_t* server;
 	struct {
 		char* str;
 		unsigned int size;
@@ -42,7 +31,7 @@ struct rpc_connection_s {
 struct rpc_server_s {
 
 	struct ev_loop* loop;
-	ev_io watcher;
+	ev_io io;
 
 	rbtree_t* proc;
 	void* data;
@@ -51,11 +40,6 @@ struct rpc_server_s {
 		struct sockaddr_in addr;
 		int fd;
 	} sock;
-
-	struct {
-		pthread_mutex_t mutex;
-		pthread_cond_t cond;
-	} td;
 };
 
 int rpc_register_procedure(rpc_server_t* server, rpc_method_f method, char* name) {
@@ -76,7 +60,7 @@ int rpc_deregister_procedure(rpc_server_t *server, char* name) {
 
 static int send_response(rpc_connection_t* conn, char* response) {
 
-	DEBUG("JSON Response: '%s'", response);
+	DEBUG("JSON Response: %s", response);
 	write(conn->fd, response, strlen(response));
 	write(conn->fd, "\n", 1);
 	return 0;
@@ -94,7 +78,7 @@ static int send_error(rpc_connection_t* conn, int code, char* message, json_node
 	char str[1024 * 1024] = { 0 };
 	int len = sizeof(str);
 
-	if (json_node_print(root, JSON_STYLE_MINIMAL, &len, str))
+	if (!json_node_print(root, JSON_STYLE_MINIMAL, &len, str))
 		send_response(conn, str);
 	json_node_destroy(root);
 	return 0;
@@ -110,23 +94,28 @@ static int send_result(rpc_connection_t* conn, json_node_t* result, json_node_t*
 	char str[1024 * 1024] = { 0 };
 	int len = sizeof(str);
 
-	if (json_node_print(result, JSON_STYLE_MINIMAL, &len, str))
+	if (!json_node_print(result, JSON_STYLE_MINIMAL, &len, str))
 		send_response(conn, str);
 	json_node_destroy(root);
 	return 0;
 }
 
-static int invoke_procedure(rpc_server_t* server, rpc_connection_t* conn, char* name, json_node_t* params, json_node_t* node) {
+static int invoke_procedure(rpc_server_t* server, rpc_connection_t* conn, char* name, json_node_t* params, json_node_t* id) {
 
-	rpc_context_t ctx = { 0 };
+	rpc_context_t ctx = {
+		.data = server->data,
+		.error = { 0 },
+	};
+
 	rpc_method_f method = get_from_rbtree(server->proc, name);
 	if (!method)
-		return send_error(conn, RPC_METHOD_NOT_FOUND, "Method not found.", node);
+		return send_error(conn, RPC_METHOD_NOT_FOUND, "Method not found.", id);
 
 	else {
-//		if (ctx->error.code)
-//			return send_error(conn, ctx->error.code, ctx->error.message, node);
-//		else	return send_result(conn, ctx->function(&ctx, params, node), node);
+		json_node_t* result = method(&ctx, params, id);
+		if (ctx.error.code)
+			return send_error(conn, ctx.error.code, ctx.error.message, id);
+		else	return send_result(conn, result, id);
 	}
 }
 
@@ -148,21 +137,23 @@ static int eval_request(rpc_server_t *server, rpc_connection_t* conn, json_node_
 	return -1;
 }
 
-static void close_connection(struct ev_loop* loop, ev_io* w) {
+static void close_connection(struct ev_loop* loop, ev_io* io) {
 
-	ev_io_stop(loop, w);
-	rpc_connection_t* conn = (rpc_connection_t*)w;
+	ev_io_stop(loop, io);
+	rpc_connection_t* conn = (rpc_connection_t*)io;
 	close(conn->fd);
 	free(conn->buffer.str);
-	free(w);
+//	free(io);
 }
 
 static void connection_cb(struct ev_loop* loop, ev_io* io, int revents) {
 
+	INFO("revents(%d)", revents);
+
 	rpc_server_t* server = (rpc_server_t*) io->data;
 	size_t readed = 0;
 	rpc_connection_t* conn = (rpc_connection_t*) io;
-	int fd = conn->fd;
+	conn->buffer.str = malloc(90);
 /*
 	if (conn->pos == (conn->size - 1)) {
 		char* buffer = realloc(conn->buffer, conn->size *= 2);
@@ -199,6 +190,7 @@ static void connection_cb(struct ev_loop* loop, ev_io* io, int revents) {
 		}
 	}
 */
+	close_connection(loop, io);
 }
 
 static void accept_cb(struct ev_loop* loop, ev_io* io, int revents) {
@@ -206,9 +198,7 @@ static void accept_cb(struct ev_loop* loop, ev_io* io, int revents) {
 	rpc_connection_t* conn = malloc(sizeof(*conn));
 	struct sockaddr_storage addr;
 	socklen_t socklen = sizeof(addr);
-
 	conn->fd = accept(io->fd, (struct sockaddr*) &addr, &socklen);
-
 	if (conn->fd == -1)
 		free(conn);
 
@@ -217,7 +207,6 @@ static void accept_cb(struct ev_loop* loop, ev_io* io, int revents) {
 		conn->io.data = io->data;
 		conn->buffer.size = 1500;
 		conn->buffer.str = calloc(1, 1500);
-		conn->server;
 		ev_io_start(loop, &conn->io);
 	}
 }
@@ -235,14 +224,11 @@ rpc_server_t* rpc_server_create(char* addr, int port, void* data) {
 	server->sock.addr.sin_family = AF_INET;
 	server->sock.addr.sin_port = htons (port);
 
-	pthread_mutex_init(&server->td.mutex, NULL);
-	pthread_cond_init(&server->td.cond, NULL);
-
 	int opt = 1;
 	if (setsockopt (server->sock.fd, SOL_SOCKET, SO_REUSEADDR, &opt, sizeof (opt)) == -1)
 		goto tcp_server_error;
 
-	inet_pton (AF_INET, addr, &server->sock.addr.sin_addr.s_addr);
+	inet_pton(AF_INET, addr, &server->sock.addr.sin_addr.s_addr);
 
 	if (bind (server->sock.fd, (struct sockaddr *) &server->sock, sizeof (struct sockaddr_in)) == -1)
 		goto tcp_server_error;
@@ -250,9 +236,9 @@ rpc_server_t* rpc_server_create(char* addr, int port, void* data) {
 	if (listen (server->sock.fd, LISTEN_COUNT) == -1)
 		goto tcp_server_error;
 
-	ev_io_init(&server->watcher, accept_cb, server->sock.fd, EV_READ);
-	server->watcher.data = server;
-	ev_io_start(server->loop, &server->watcher);
+	ev_io_init(&server->io, accept_cb, server->sock.fd, EV_READ);
+	server->io.data = server;
+	ev_io_start(server->loop, &server->io);
 	return server;
 
 tcp_server_error:
@@ -261,8 +247,6 @@ tcp_server_error:
 		close(server->sock.fd);
 
 	rbtree_destroy(server->proc);
-	pthread_mutex_destroy(&server->td.mutex);
-	pthread_cond_destroy(&server->td.cond);
 
 	free(server);
 	return NULL;
@@ -296,7 +280,5 @@ void rpc_server_destroy(rpc_server_t *server){
 		return;
 
 	rbtree_destroy(server->proc);
-	pthread_mutex_destroy(&server->td.mutex);
-	pthread_cond_destroy(&server->td.cond);
 	free(server);
 }

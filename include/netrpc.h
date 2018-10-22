@@ -15,7 +15,16 @@ typedef struct rpc_server_s rpc_server_t;
 typedef struct rpc_connection_s rpc_connection_t;
 typedef struct rpc_procedure_s rpc_procedure_t;
 
-typedef json_node_t* (*rpc_method_f)(rpc_context_t* context, json_node_t* params, json_node_t* node);
+typedef json_node_t* (*rpc_method_f)(rpc_context_t* ctx, json_node_t* params, json_node_t* id);
+
+struct rpc_context_s {
+
+	void* data;
+	struct {
+		int code;
+		char* message;
+	} error;
+};
 
 /** */
 rpc_server_t* rpc_server_create(char* addr, int port, void* data);
