@@ -30,7 +30,7 @@ struct rpc_connection_s {
 	struct ev_io io;
 	int fd;
 	int pos;
-	unsigned int buffer_size;
+	unsigned int size;
 	char* buffer;
 	rpc_server_t* server;
 };
@@ -39,7 +39,7 @@ struct rpc_server_s {
 
 	struct ev_loop* loop;
 	ev_io watcher;
-	rbtree_t* procedures;
+	rbtree_t* proc;
 	struct sockaddr_in sockaddr;
 	pthread_mutex_t mutex;
 };
@@ -52,7 +52,7 @@ static int send_response(rpc_connection_t* conn, char* response) {
 	write(fd, "\n", 1);
 	return 0;
 }
-
+/*
 static int send_error(rpc_connection_t* conn, int code, char* message, json_node_t* node) {
 
 	json_node_t *result_root = json_node_object(NULL);
@@ -94,7 +94,7 @@ static int invoke_procedure(rpc_server_t* server, rpc_connection_t* conn, char* 
 //		else	return send_result(conn, ctx->function(&ctx, params, node), node);
 	}
 }
-
+*/
 //	int i = rbtree_size(server->procedures);
 //	while (i--) {
 //		if (!strcmp(server->procedures[i].name, name)) {
@@ -145,13 +145,15 @@ static int eval_request(rpc_server_t *server,
 }
 */
 
-static void close_connection(struct ev_loop *loop, ev_io *w) {
+static void close_connection(struct ev_loop* loop, ev_io* w) {
+
 	ev_io_stop(loop, w);
-	close(((struct rpc_connection_t*) w)->fd);
-	free(((struct rpc_connection_t*) w)->buffer);
-	free(((struct rpc_connection_t*) w));
+	close(((rpc_connection_t*) w)->fd);
+	free(((rpc_connection_t*) w)->buffer);
+	free(w);
 }
 
+/*
 static void connection_cb(struct ev_loop *loop, ev_io *w, int revents) {
 
 	struct rpc_connection *conn;
@@ -215,7 +217,7 @@ static void connection_cb(struct ev_loop *loop, ev_io *w, int revents) {
 		}
 	}
 }
-
+*/
 /*
 static void *get_in_addr(struct sockaddr *sa) {
 
@@ -263,16 +265,7 @@ rpc_server_t* rpc_server_create(char* addr, int port) {
 	rpc_server_t* server = calloc(1, sizeof(*server));
 	if (server) {
 		server->loop = EV_DEFAULT;
-		setDebugMode(10);
-		setConsoleLog(10);
-
-		char * debug_level_env = getenv("RPC_DEBUG");
-		if (!debug_level_env)
-			setDebugMode(0);
-		else {
-			setDebugMode(strtol(debug_level_env, NULL, 10));
-			DEBUG("RPC Debug level %d", getDebugMode());
-		}
+		DEBUG("RPC Debug level %d", getDebugMode());
 
 //		return __jrpc_server_start(server);
 
@@ -401,29 +394,23 @@ static void jrpc_procedure_destroy(struct jrpc_procedure *procedure){
 		procedure->data = NULL;
 	}
 }
+*/
+int rpc_register_procedure(rpc_server_t* server, rpc_method_f m, char* name, void* data) {
 
-int jrpc_register_procedure(rpc_server_t *server,
-		jrpc_function function_pointer, char *name, void * data) {
-	int i = server->procedure_count++;
-	if (!server->procedures)
-		server->procedures = malloc(sizeof(struct jrpc_procedure));
-	else {
-		struct jrpc_procedure * ptr = realloc(server->procedures,
-				sizeof(struct jrpc_procedure) * server->procedure_count);
-		if (!ptr)
-			return -1;
-		server->procedures = ptr;
-
-	}
-	if ((server->procedures[i].name = strdup(name)) == NULL)
+	if (!server || !name || !data)
 		return -1;
-	server->procedures[i].function = function_pointer;
-	server->procedures[i].data = data;
+
+//	rpc_procedure_t* p = calloc(1, sizeof(*p));
+//	if (!p)
+//		return -1;
+
+//	p->function = m;
+	set_to_rbtree(server->proc, name, data);
 	return 0;
 }
 
-int jrpc_deregister_procedure(rpc_server_t *server, char *name) {
-
+int rpc_deregister_procedure(rpc_server_t *server, char *name) {
+/*
 	int i;
 	int found = 0;
 	if (server->procedures){
@@ -453,6 +440,6 @@ int jrpc_deregister_procedure(rpc_server_t *server, char *name) {
 		fprintf(stderr, "server : procedure '%s' not found\n", name);
 		return -1;
 	}
+*/
 	return 0;
 }
-*/
