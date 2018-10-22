@@ -18,7 +18,7 @@ typedef struct rpc_procedure_s rpc_procedure_t;
 typedef json_node_t* (*rpc_method_f)(rpc_context_t* context, json_node_t* params, json_node_t* node);
 
 /** */
-rpc_server_t* rpc_server_create(char* addr, int port);
+rpc_server_t* rpc_server_create(char* addr, int port, void* data);
 
 /** */
 void rpc_server_run(rpc_server_t* server);
@@ -30,7 +30,7 @@ int rpc_server_stop(rpc_server_t* server);
 void rpc_server_destroy(rpc_server_t* server);
 
 /** */
-int rpc_register_procedure(rpc_server_t* server, rpc_method_f method, char* name, void* data);
+int rpc_register_procedure(rpc_server_t* server, rpc_method_f method, char* name);
 
 /** */
 int rpc_deregister_procedure(rpc_server_t* server, char* name);
