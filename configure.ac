@@ -12,6 +12,10 @@ AC_CHECK_LIB(pthread, pthread_create)
 
 AC_CHECK_HEADERS(sys/socket.h sys/select.h)
 
+PKG_CHECK_MODULES(LIBEV, libev)
+AC_SUBST(LIBEV_LIBS)
+AC_SUBST(LIBEV_CFLAGS)
+
 AC_CONFIG_FILES([
 	Makefile
 	include/Makefile

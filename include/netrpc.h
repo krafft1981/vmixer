@@ -12,6 +12,7 @@
 
 typedef struct rpc_context_s rpc_context_t;
 typedef struct rpc_server_s rpc_server_t;
+typedef struct rpc_connection_s rpc_connection_t;
 typedef struct rpc_procedure_s rpc_procedure_t;
 
 typedef json_node_t* (*rpc_method_f)(rpc_context_t* ctx, json_node_t* params, json_node_t* id);
