@@ -2,10 +2,10 @@
 AM_YFLAGS		=	-d -v
 
 sbin_PROGRAMS		=	vmixer
-noinst_PROGRAMS		=	tester
+check_PROGRAMS		=	tester
 
-vmixer_LDADD		=	$(LIBEV_LIBS)
-vmixer_CFLAGS		=	$(LIBEV_CFLAGS) -I../include
+vmixer_LDADD		=	
+vmixer_CFLAGS		=	 -I../include
 vmixer_LDFLAGS		=	-rdynamic -fPIC -DPIC -s
 vmixer_SOURCES		=	vmixer.c \
 				logger.c \
@@ -17,8 +17,8 @@ vmixer_SOURCES		=	vmixer.c \
 				thread.c \
 				propes.c
 
-tester_LDADD		=	$(LIBEV_LIBS)
-tester_CFLAGS		=	$(LIBEV_CFLAGS) -I../include
+tester_LDADD		=	
+tester_CFLAGS		=	 -I../include
 tester_LDFLAGS		=	-rdynamic -fPIC -DPIC -s
 tester_SOURCES		=	tester.c \
 				logger.c \

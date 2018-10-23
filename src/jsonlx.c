@@ -2418,8 +2418,8 @@ int json_node_print(json_node_t* node, json_style_t style, int* len, char* str) 
 			int id = rbtree_size(node->v_object);
 			while ((rbtree_iterate(it, &key, &data)) && !res && id--) {
 				if (res = strlcatv(str, len, "\"", key, "\":", NULL)) continue;
-//				if (res = json_node_print(data, style, len, str))     continue;
-//				if (res = strlcatv(str, len, ",", NULL))              continue;
+				if (res = json_node_print(data, style, len, str))     continue;
+				if (res = strlcatv(str, len, ",", NULL))              continue;
 			}
 
 			if (strlcatv(str, len, "}", NULL))

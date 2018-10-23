@@ -89,7 +89,7 @@ POST_UNINSTALL = :
 build_triplet = @build@
 host_triplet = @host@
 sbin_PROGRAMS = vmixer$(EXEEXT)
-noinst_PROGRAMS = tester$(EXEEXT)
+check_PROGRAMS = tester$(EXEEXT)
 subdir = src
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/configure.ac
@@ -101,15 +101,14 @@ CONFIG_HEADER = $(top_builddir)/config.h
 CONFIG_CLEAN_FILES =
 CONFIG_CLEAN_VPATH_FILES =
 am__installdirs = "$(DESTDIR)$(sbindir)"
-PROGRAMS = $(noinst_PROGRAMS) $(sbin_PROGRAMS)
+PROGRAMS = $(sbin_PROGRAMS)
 am_tester_OBJECTS = tester-tester.$(OBJEXT) tester-logger.$(OBJEXT) \
 	tester-vector.$(OBJEXT) tester-rbtree.$(OBJEXT) \
 	tester-jsonlx.$(OBJEXT) tester-jsonpr.$(OBJEXT) \
 	tester-netrpc.$(OBJEXT) tester-thread.$(OBJEXT) \
 	tester-propes.$(OBJEXT)
 tester_OBJECTS = $(am_tester_OBJECTS)
-am__DEPENDENCIES_1 =
-tester_DEPENDENCIES = $(am__DEPENDENCIES_1)
+tester_DEPENDENCIES =
 AM_V_lt = $(am__v_lt_@AM_V@)
 am__v_lt_ = $(am__v_lt_@AM_DEFAULT_V@)
 am__v_lt_0 = --silent
@@ -123,7 +122,7 @@ am_vmixer_OBJECTS = vmixer-vmixer.$(OBJEXT) vmixer-logger.$(OBJEXT) \
 	vmixer-netrpc.$(OBJEXT) vmixer-thread.$(OBJEXT) \
 	vmixer-propes.$(OBJEXT)
 vmixer_OBJECTS = $(am_vmixer_OBJECTS)
-vmixer_DEPENDENCIES = $(am__DEPENDENCIES_1)
+vmixer_DEPENDENCIES =
 vmixer_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) \
 	$(LIBTOOLFLAGS) --mode=link $(CCLD) $(vmixer_CFLAGS) $(CFLAGS) \
 	$(vmixer_LDFLAGS) $(LDFLAGS) -o $@
@@ -243,8 +242,6 @@ LDFLAGS = @LDFLAGS@
 LEX = @LEX@
 LEXLIB = @LEXLIB@
 LEX_OUTPUT_ROOT = @LEX_OUTPUT_ROOT@
-LIBEV_CFLAGS = @LIBEV_CFLAGS@
-LIBEV_LIBS = @LIBEV_LIBS@
 LIBOBJS = @LIBOBJS@
 LIBS = @LIBS@
 LIBTOOL = @LIBTOOL@
@@ -269,9 +266,6 @@ PACKAGE_TARNAME = @PACKAGE_TARNAME@
 PACKAGE_URL = @PACKAGE_URL@
 PACKAGE_VERSION = @PACKAGE_VERSION@
 PATH_SEPARATOR = @PATH_SEPARATOR@
-PKG_CONFIG = @PKG_CONFIG@
-PKG_CONFIG_LIBDIR = @PKG_CONFIG_LIBDIR@
-PKG_CONFIG_PATH = @PKG_CONFIG_PATH@
 RANLIB = @RANLIB@
 SED = @SED@
 SET_MAKE = @SET_MAKE@
@@ -333,8 +327,8 @@ top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
 AM_YFLAGS = -d -v
-vmixer_LDADD = $(LIBEV_LIBS)
-vmixer_CFLAGS = $(LIBEV_CFLAGS) -I../include
+vmixer_LDADD = 
+vmixer_CFLAGS = -I../include
 vmixer_LDFLAGS = -rdynamic -fPIC -DPIC -s
 vmixer_SOURCES = vmixer.c \
 				logger.c \
@@ -346,8 +340,8 @@ vmixer_SOURCES = vmixer.c \
 				thread.c \
 				propes.c
 
-tester_LDADD = $(LIBEV_LIBS)
-tester_CFLAGS = $(LIBEV_CFLAGS) -I../include
+tester_LDADD = 
+tester_CFLAGS = -I../include
 tester_LDFLAGS = -rdynamic -fPIC -DPIC -s
 tester_SOURCES = tester.c \
 				logger.c \
@@ -393,8 +387,8 @@ $(ACLOCAL_M4):  $(am__aclocal_m4_deps)
 	cd $(top_builddir) && $(MAKE) $(AM_MAKEFLAGS) am--refresh
 $(am__aclocal_m4_deps):
 
-clean-noinstPROGRAMS:
-	@list='$(noinst_PROGRAMS)'; test -n "$$list" || exit 0; \
+clean-checkPROGRAMS:
+	@list='$(check_PROGRAMS)'; test -n "$$list" || exit 0; \
 	echo " rm -f" $$list; \
 	rm -f $$list || exit $$?; \
 	test -n "$(EXEEXT)" || exit 0; \
@@ -855,6 +849,7 @@ distdir: $(DISTFILES)
 	  fi; \
 	done
 check-am: all-am
+	$(MAKE) $(AM_MAKEFLAGS) $(check_PROGRAMS)
 check: check-am
 all-am: Makefile $(PROGRAMS)
 installdirs:
@@ -896,7 +891,7 @@ maintainer-clean-generic:
 	-rm -f jsonpr.h
 clean: clean-am
 
-clean-am: clean-generic clean-libtool clean-noinstPROGRAMS \
+clean-am: clean-checkPROGRAMS clean-generic clean-libtool \
 	clean-sbinPROGRAMS mostlyclean-am
 
 distclean: distclean-am
@@ -965,22 +960,22 @@ ps-am:
 
 uninstall-am: uninstall-sbinPROGRAMS
 
-.MAKE: install-am install-strip
+.MAKE: check-am install-am install-strip
 
-.PHONY: CTAGS GTAGS TAGS all all-am check check-am clean clean-generic \
-	clean-libtool clean-noinstPROGRAMS clean-sbinPROGRAMS \
-	cscopelist-am ctags ctags-am distclean distclean-compile \
-	distclean-generic distclean-libtool distclean-tags distdir dvi \
-	dvi-am html html-am info info-am install install-am \
-	install-data install-data-am install-dvi install-dvi-am \
-	install-exec install-exec-am install-html install-html-am \
-	install-info install-info-am install-man install-pdf \
-	install-pdf-am install-ps install-ps-am install-sbinPROGRAMS \
-	install-strip installcheck installcheck-am installdirs \
-	maintainer-clean maintainer-clean-generic mostlyclean \
-	mostlyclean-compile mostlyclean-generic mostlyclean-libtool \
-	pdf pdf-am ps ps-am tags tags-am uninstall uninstall-am \
-	uninstall-sbinPROGRAMS
+.PHONY: CTAGS GTAGS TAGS all all-am check check-am clean \
+	clean-checkPROGRAMS clean-generic clean-libtool \
+	clean-sbinPROGRAMS cscopelist-am ctags ctags-am distclean \
+	distclean-compile distclean-generic distclean-libtool \
+	distclean-tags distdir dvi dvi-am html html-am info info-am \
+	install install-am install-data install-data-am install-dvi \
+	install-dvi-am install-exec install-exec-am install-html \
+	install-html-am install-info install-info-am install-man \
+	install-pdf install-pdf-am install-ps install-ps-am \
+	install-sbinPROGRAMS install-strip installcheck \
+	installcheck-am installdirs maintainer-clean \
+	maintainer-clean-generic mostlyclean mostlyclean-compile \
+	mostlyclean-generic mostlyclean-libtool pdf pdf-am ps ps-am \
+	tags tags-am uninstall uninstall-am uninstall-sbinPROGRAMS
 
 .PRECIOUS: Makefile
 
